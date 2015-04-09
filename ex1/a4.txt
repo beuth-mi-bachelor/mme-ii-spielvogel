@@ -1,0 +1,13 @@
+Bis auf die Video-Controls des nativen HTML5-Players, sieht alles in jedem Browser gleich aus.
+
+Chrome 41.0.2272.118 m
+ - voll funktionsfähig
+
+Firefox 33.1
+ - voll funktionsfähig
+
+Safari 5.1.7
+ - voll funktionsfähig
+
+Internet Explorer 11
+ - voll funktionsfähig
