@@ -4,7 +4,8 @@
  * matnr: 798419
  */
 
-var togglePlaying,
+var videoTest,
+    togglePlaying,
     stop,
     video,
     fullscreen,
@@ -30,6 +31,7 @@ function displayConsoleMessage() {
 
 function bindSelectors() {
     "use strict";
+    videoTest = document.getElementById("video-test");
     togglePlaying = document.getElementById("toggle-playing");
     stop = document.getElementById("stop");
     fullscreen = document.getElementById("fullscreen");
@@ -63,8 +65,23 @@ function stopVideo() {
     togglePlaying.className = "fa fa-play";
 }
 
-function goToFullscreen(element) {
+function fsExitHandler() {
     "use strict";
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+        fullscreen.className = "fa fa-compress";
+        fullscreen.removeEventListener("click", goToFullscreen, false);
+        fullscreen.addEventListener("click", exitFullscreen, false);
+    } else {
+        fullscreen.className = "fa fa-expand";
+        fullscreen.removeEventListener("click", exitFullscreen, false);
+        fullscreen.addEventListener("click", goToFullscreen, false);
+    }
+}
+
+function goToFullscreen() {
+    "use strict";
+    var element = videoTest;
+
     if (element.requestFullscreen) {
         element.requestFullscreen();
     } else if (element.mozRequestFullScreen) {
@@ -73,6 +90,21 @@ function goToFullscreen(element) {
         element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
     } else if (element.msRequestFullscreen) {
         element.msRequestFullscreen();
+    }
+}
+
+function exitFullscreen() {
+    "use strict";
+    var element = videoTest;
+
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+    } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
     }
 }
 
@@ -152,9 +184,12 @@ function bindEvents() {
         stopVideo();
     }, false);
 
-    fullscreen.addEventListener("click", function () {
-        goToFullscreen(canvas);
-    }, false);
+    fullscreen.addEventListener("click", goToFullscreen, false);
+
+    videoTest.addEventListener("fullscreenchange", fsExitHandler);
+    videoTest.addEventListener("webkitfullscreenchange", fsExitHandler);
+    videoTest.addEventListener("mozfullscreenchange", fsExitHandler);
+    videoTest.addEventListener("MSFullscreenChange", fsExitHandler);
 
     progress.addEventListener("input", function () {
         manualTimeChange = true;
