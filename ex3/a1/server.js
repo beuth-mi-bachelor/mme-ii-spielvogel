@@ -1,8 +1,9 @@
 var express = require('express');
 var app = express();
 
-var ip = '127.0.0.1';
-var port = 1337;
+var args = process.argv.slice(2);
+
+var port = parseInt(args[0], 10) || 1337;
 
 app.get('/', function (req, res) {
     "use strict";
@@ -11,7 +12,6 @@ app.get('/', function (req, res) {
 
 var server = app.listen(port, function () {
     "use strict";
-    var host = server.address().address;
     var port = server.address().port;
-    console.log('server listening at http://%s:%s', host, port);
+    console.log('server listening at http://localhost:%s', port);
 });
