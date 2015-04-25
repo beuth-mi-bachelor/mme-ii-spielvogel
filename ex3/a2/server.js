@@ -4,22 +4,32 @@ var express = require('express'),
 var app = express();
 
 var args = process.argv.slice(2),
-    port = parseInt(args[0], 10) || 1337;
+    port = parseInt(args[0], 10) || 1337,
+    pubDirName = "public";
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/' + pubDirName));
 
 app.get(/^(.+)$/, function(req, res){
     "use strict";
-    console.log(req);
-    res.sendFile(__dirname + req.params[0]);
-});
+    res.sendFile(__dirname + req.params[0], function(err, result) {
+        var html = "<ul>";
+        if (err.status === 404) {
+            fs.readdir(__dirname + "/" + pubDirName + req.params[0], function (err, files) {
+                if (err) {
+                    console.error(err);
+                    res.end();
+                }
 
-function getDirectories(path) {
-    "use strict";
-    return fs.readdirSync(path).filter(function (file) {
-        return fs.statSync(path+'/'+file).isDirectory();
+                files.forEach(function (file) {
+                    html += "<li>" + file + "</li>";
+                });
+
+                html += "</ul>";
+                res.send(html);
+            });
+        }
     });
-}
+});
 
 var server = app.listen(port, function () {
     "use strict";
