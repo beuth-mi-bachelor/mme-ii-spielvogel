@@ -9,6 +9,11 @@ var args = process.argv.slice(2),
 
 app.use(express.static(__dirname + '/' + pubDirName));
 
+app.get("/hello", function(req, res){
+    "use strict";
+    res.send("Hello World!");
+});
+
 app.get(/^(.+)$/, function(req, res){
     "use strict";
     res.sendFile(__dirname + req.params[0], function(err, result) {
@@ -30,6 +35,7 @@ app.get(/^(.+)$/, function(req, res){
         }
     });
 });
+
 
 var server = app.listen(port, function () {
     "use strict";

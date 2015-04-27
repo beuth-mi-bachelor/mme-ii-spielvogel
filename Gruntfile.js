@@ -1,5 +1,7 @@
 module.exports = function(grunt) {
 
+    var PORT = 8080;
+
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -21,14 +23,35 @@ module.exports = function(grunt) {
                 src: ['**'],
                 dest: 'ex3/a3/built/public'
             }
+        },
+        shell: {
+            testServer: {
+                options: {
+                    stdout: true
+                },
+                command: ' jasmine-node ex3/a3'
+            }
+        },
+        express: {
+            options: {
+
+            },
+            server: {
+                options: {
+                    script: 'ex3/a3/src/server.js',
+                    args: [PORT]
+                }
+            }
         }
     });
 
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-shell');
+    grunt.loadNpmTasks('grunt-express-server');
 
     // Default task(s).
-    grunt.registerTask('default', ['uglify:ex3a3', 'copy:ex3a3']);
+    grunt.registerTask('default', ['express:server', 'shell:testServer', 'uglify:ex3a3', 'copy:ex3a3']);
 
 };
