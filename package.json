@@ -1,14 +1,15 @@
 {
-  "name": "a3",
-  "version": "0.1.0",
-  "description": "",
+  "name": "Uebung 3",
+  "version": "1.0",
+  "description": "This is my first nodeJS-server app",
   "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+  "author": "Michael Duve",
+  "email" : "mduve@designmail.net",
+  "license": "MIT",
+  "engines": {
+    "node" : "^0.12",
+    "npm" : "~2.5.1"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "express": "^4.12.3"
   },
