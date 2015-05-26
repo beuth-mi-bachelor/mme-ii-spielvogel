@@ -14,6 +14,12 @@ module.exports = function(grunt) {
                     src: 'ex3/a3/src/server.js',
                     dest: 'ex3/a3/built/server.js'
                 }]
+            },
+            ex4a1: {
+                files: [{
+                    src: 'ex4/a1/src/server.js',
+                    dest: 'ex4/a1/built/server.js'
+                }]
             }
         },
         copy: {
@@ -22,6 +28,12 @@ module.exports = function(grunt) {
                 cwd: 'ex3/a3/src/public',
                 src: ['**'],
                 dest: 'ex3/a3/built/public'
+            },
+            ex4a1: {
+                expand: true,
+                cwd: 'ex4/a1/src/public',
+                src: ['**'],
+                dest: 'ex4/a1/built/public'
             }
         },
         shell: {
@@ -30,6 +42,12 @@ module.exports = function(grunt) {
                     stdout: true
                 },
                 command: ' jasmine-node ex3/a3'
+            },
+            testServerEx4: {
+                options: {
+                    stdout: true
+                },
+                command: ' jasmine-node ex4/a1'
             }
         },
         express: {
@@ -39,6 +57,12 @@ module.exports = function(grunt) {
             server: {
                 options: {
                     script: 'ex3/a3/src/server.js',
+                    args: [PORT]
+                }
+            },
+            serverEx4: {
+                options: {
+                    script: 'ex4/a1/src/server.js',
                     args: [PORT]
                 }
             }
@@ -52,6 +76,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-express-server');
 
     // Default task(s).
-    grunt.registerTask('default', ['express:server', 'shell:testServer', 'uglify:ex3a3', 'copy:ex3a3']);
+    //grunt.registerTask('default', ['express:server', 'shell:testServer', 'uglify:ex3a3', 'copy:ex3a3']);
+    grunt.registerTask('default', ['express:serverEx4', 'shell:testServerEx4', 'uglify:ex4a1', 'copy:ex4a1']);
 
 };
