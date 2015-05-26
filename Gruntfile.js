@@ -77,6 +77,6 @@ module.exports = function(grunt) {
 
     // Default task(s).
     //grunt.registerTask('default', ['express:server', 'shell:testServer', 'uglify:ex3a3', 'copy:ex3a3']);
-    grunt.registerTask('default', ['express:serverEx4', 'shell:testServerEx4', 'uglify:ex4a1', 'copy:ex4a1']);
+    grunt.registerTask('default', ['uglify:ex4a1', 'copy:ex4a1']);
 
 };
