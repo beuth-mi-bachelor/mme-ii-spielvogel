@@ -1,6 +1,6 @@
 {
-  "name": "Uebung 3",
-  "version": "1.0",
+  "name": "nodeJS-Server",
+  "version": "0.0.1",
   "description": "This is my first nodeJS-server app",
   "main": "server.js",
   "author": "Michael Duve",
@@ -11,7 +11,9 @@
     "npm" : "~2.5.1"
   },
   "dependencies": {
-    "express": "^4.12.3"
+    "express": "^4.12.3",
+    "mongoose": "~3.6.13",
+    "body-parser": "~1.0.1"
   },
   "devDependencies": {
     "express": "^4.12.3",
