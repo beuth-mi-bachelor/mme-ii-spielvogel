@@ -1,6 +1,7 @@
 var express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
+    fs = require('fs'),
     Book = require('./models/book');
 
 var error = {
@@ -8,6 +9,8 @@ var error = {
     statusCode : 404,
     msg: "Requested resource not found"
 };
+
+var pubDirName = "public";
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -22,6 +25,7 @@ var args = process.argv.slice(2),
     port = parseInt(args[0], 10) || 1337;
 
 var router = express.Router();
+var routing = express.Router();
 
 router.get('/', function(req, res) {
     "use strict";
@@ -44,10 +48,7 @@ router.route('/books')
             if (err) {
                 return res.json(error);
             }
-            res.json({
-                message: "created book",
-                item: book
-            });
+            res.json(book);
         });
     })
     .get(function(req, res) {
@@ -70,10 +71,7 @@ router.route('/books/:book_id')
             if (book === null) {
                 return res.json(error);
             }
-            res.json({
-                message: "found book",
-                item: book
-            });
+            res.json(book);
         });
     })
     .put(function(req, res) {
@@ -95,10 +93,7 @@ router.route('/books/:book_id')
                 if (err) {
                     return res.json(error);
                 }
-                res.json({
-                    message: "updated book",
-                    item: book
-                });
+                res.json(book);
             });
 
         });
@@ -119,8 +114,37 @@ router.route('/books/:book_id')
         });
     });
 
+routing.use(express.static(__dirname + '/' + pubDirName));
+
+app.get("/hello", function(req, res){
+    "use strict";
+    res.send("Hello World!");
+});
+
+routing.get(/^(.+)$/, function(req, res){
+    "use strict";
+    res.sendFile(__dirname + req.params[0], function(err, result) {
+        var html = "<ul>";
+        if (err.status === 404) {
+            fs.readdir(__dirname + "/" + pubDirName + req.params[0], function (err, files) {
+                if (err) {
+                    return res.status(404).send('Not found');
+                }
+
+                files.forEach(function (file) {
+                    html += "<li>" + file + "</li>";
+                });
+
+                html += "</ul>";
+                res.send(html);
+            });
+        }
+    });
+});
+
 
 app.use('/api', router);
+app.use('/public', routing);
 
 var server = app.listen(port, function () {
     "use strict";

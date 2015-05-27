@@ -25,7 +25,7 @@ frisby.create('Start Server')
 
 frisby.create('Add Book')
     .post('http://localhost:'+PORT+'/api/books', testItem)
-    .expectJSONTypes('item', {
+    .expectJSONTypes({
         name: String,
         publisher: String,
         author: String,
@@ -42,11 +42,11 @@ frisby.create('Add Book')
             .expectHeaderContains('content-type', 'application/json')
             .toss();
 
-        frisby.create('Read Book ' + book.item._id)
-            .get('http://localhost:'+PORT+'/api/books/' + book.item._id)
+        frisby.create('Read Book ' + book._id)
+            .get('http://localhost:'+PORT+'/api/books/' + book._id)
             .expectStatus(200)
             .expectHeaderContains('content-type', 'application/json')
-            .expectJSON('item', {
+            .expectJSON({
                 name: testItem.name,
                 publisher: testItem.publisher,
                 author: testItem.author,
@@ -65,16 +65,16 @@ frisby.create('Add Book')
 
         var oldBook = book;
 
-        frisby.create('Update Book ' + book.item._id)
-            .put('http://localhost:'+PORT+'/api/books/' + book.item._id, testItem2)
+        frisby.create('Update Book ' + book._id)
+            .put('http://localhost:'+PORT+'/api/books/' + book._id, testItem2)
             .expectStatus(200)
             .expectHeaderContains('content-type', 'application/json')
             .afterJSON(function(updateBook) {
-                frisby.create('Read Book ' + updateBook.item._id)
-                    .get('http://localhost:'+PORT+'/api/books/' + updateBook.item._id)
+                frisby.create('Read Book ' + updateBook._id)
+                    .get('http://localhost:'+PORT+'/api/books/' + updateBook._id)
                     .expectStatus(200)
                     .expectHeaderContains('content-type', 'application/json')
-                    .expectJSON('item', {
+                    .expectJSON({
                         name: testItem2.name,
                         publisher: testItem2.publisher,
                         author: testItem2.author,
@@ -87,13 +87,13 @@ frisby.create('Add Book')
                         updated: function(val) {
                             var updateDate = new Date(val);
                             expect(updateDate).toBeLessThan(new Date());
-                            expect(updateDate).toBeGreaterThan(new Date(oldBook.item.updated));
+                            expect(updateDate).toBeGreaterThan(new Date(oldBook.updated));
 
                         }
                     })
                     .afterJSON(function(val) {
-                        frisby.create('Delete Book ' + val.item._id)
-                            .delete('http://localhost:'+PORT+'/api/books/' + val.item._id)
+                        frisby.create('Delete Book ' + val._id)
+                            .delete('http://localhost:'+PORT+'/api/books/' + val._id)
                             .expectStatus(200)
                             .expectHeaderContains('content-type', 'application/json')
                             .afterJSON(function(deletedItem) {
