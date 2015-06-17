@@ -4,10 +4,16 @@ var express = require('express'),
     fs = require('fs'),
     Book = require('./models/book');
 
-var error = {
-    type: "error",
+var notFound = {
+    type: "notFound",
     statusCode: 404,
     msg: "Requested resource not found"
+};
+
+var badRequest = {
+    type: "badRequest",
+    statusCode: 400,
+    msg: "Parameters were wrong"
 };
 
 var pubDirName = "public";
@@ -40,16 +46,14 @@ router.route('/books')
         var book = new Book();
 
         book.name = req.body.name;
-        book.release = req.body.release;
-        book.publisher = req.body.publisher;
-        book.language = req.body.language;
-        book.author = req.body.author;
-        book.updated = new Date();
+        book.description = req.body.description;
+        book.ISBN = req.body.ISBN;
+        book.state = req.body.state;
 
         book.save(function (err) {
             if (err) {
                 res.statusCode = 400;
-                return res.json(error);
+                return res.json(notFound);
             }
             res.statusCode = 200;
             res.json(book);
@@ -60,7 +64,7 @@ router.route('/books')
         Book.find(function (err, books) {
             if (err) {
                 res.statusCode = 400;
-                return res.json(error);
+                return res.json(notFound);
             }
             res.statusCode = 200;
             res.json(books);
@@ -73,11 +77,11 @@ router.route('/books/:book_id')
         Book.findById(req.params.book_id, function (err, book) {
             if (err) {
                 res.statusCode = 404;
-                return res.json(error);
+                return res.json(notFound);
             }
             if (book === null) {
                 res.statusCode = 404;
-                return res.json(error);
+                return res.json(notFound);
             }
             res.statusCode = 200;
             res.json(book);
@@ -89,20 +93,18 @@ router.route('/books/:book_id')
 
             if (err) {
                 res.statusCode = 404;
-                return res.json(error);
+                return res.json(notFound);
             }
 
             book.name = req.body.name;
-            book.release = req.body.release;
-            book.publisher = req.body.publisher;
-            book.language = req.body.language;
-            book.author = req.body.author;
-            book.updated = new Date();
+            book.description = req.body.description;
+            book.ISBN = req.body.ISBN;
+            book.state = req.body.state;
 
             book.save(function (err) {
                 if (err) {
                     res.statusCode = 400;
-                    return res.json(error);
+                    return res.json(badRequest);
                 }
                 res.statusCode = 200;
                 res.json(book);
@@ -116,16 +118,16 @@ router.route('/books/:book_id')
         Book.findById(req.params.book_id, function (err, book) {
             if (err) {
                 res.statusCode = 404;
-                return res.json(error);
+                return res.json(notFound);
             }
             if (book === null) {
                 res.statusCode = 404;
-                return res.json(error);
+                return res.json(notFound);
             }
             book.remove(function (err) {
                 if (err) {
                     res.statusCode = 400;
-                    return res.json(error);
+                    return res.json(notFound);
                 }
                 res.statusCode = 200;
                 res.json({
@@ -168,7 +170,6 @@ routing.get(/^(.+)$/, function (req, res) {
 
 docRoute.get(/^(.+)$/, function (req, res) {
     "use strict";
-    console.log(req.params[0]);
     res.sendFile(__dirname + req.params[0]);
 });
 

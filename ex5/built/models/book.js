@@ -1,2 +1,2 @@
 /*! nodeJS-Server - v0.0.1 - 2015-06-17 */
-var mongoose=require("mongoose"),Schema=mongoose.Schema,BookScheema=new Schema({name:String,release:Date,updated:{type:Date,"default":Date.now},author:String,publisher:String,language:String});module.exports=mongoose.model("Books",BookScheema);
+var mongoose=require("mongoose"),Schema=mongoose.Schema,BookScheema=new Schema({name:{type:String,required:!0},description:{type:String,required:!1},ISBN:{type:String,required:!0},state:{type:Number,required:!1,"default":0}});module.exports=mongoose.model("Books",BookScheema);
