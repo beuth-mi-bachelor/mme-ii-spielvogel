@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-
+    "use strict";
     var PORT = 1337;
 
     // Project configuration.
@@ -24,6 +24,16 @@ module.exports = function(grunt) {
                         src: 'ex4/src/models/book.js',
                         dest: 'ex4/built/models/book.js'
                     }]
+            },
+            ex5: {
+                files: [{
+                    src: 'ex5/src/server.js',
+                    dest: 'ex5/built/server.js'
+                },
+                    {
+                        src: 'ex5/src/models/book.js',
+                        dest: 'ex5/built/models/book.js'
+                    }]
             }
         },
         copy: {
@@ -44,6 +54,18 @@ module.exports = function(grunt) {
                 cwd: 'ex4/src/docs',
                 src: ['**'],
                 dest: 'ex4/built/docs'
+            },
+            ex5: {
+                expand: true,
+                cwd: 'ex5/src/public',
+                src: ['**'],
+                dest: 'ex5/built/public'
+            },
+            ex5Docs: {
+                expand: true,
+                cwd: 'ex5/src/docs',
+                src: ['**'],
+                dest: 'ex5/built/docs'
             }
         },
         express: {
@@ -59,6 +81,12 @@ module.exports = function(grunt) {
             ex4: {
                 options: {
                     script: 'ex4/src/server.js',
+                    args: [PORT]
+                }
+            },
+            ex5: {
+                options: {
+                    script: 'ex5/src/server.js',
                     args: [PORT]
                 }
             }
@@ -84,6 +112,7 @@ module.exports = function(grunt) {
 
     // Default task(s).
     //grunt.registerTask('default', ['express:ex3', 'jasmine_node:ex3', 'uglify:ex3', 'copy:ex3']);
-    grunt.registerTask('default', ['express:ex4', "jasmine_node", 'uglify:ex4', 'copy:ex4', 'copy:ex4Docs']);
+    //grunt.registerTask('default', ['express:ex4', "jasmine_node", 'uglify:ex4', 'copy:ex4', 'copy:ex4Docs']);
+    grunt.registerTask('default', ['express:ex5', "jasmine_node", 'uglify:ex5', 'copy:ex5', 'copy:ex5Docs']);
 
 };

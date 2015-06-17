@@ -1,0 +1,264 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "NodeJS REST Api",
+        "description": "Newest Version of my App",
+        "version": "0.0.1"
+    },
+    "host": "localhost:1337",
+    "schemes": [
+        "http"
+    ],
+    "basePath": "/api",
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/books": {
+            "get": {
+                "summary": "Get all books",
+                "description": "The get Book route returns information about all Books available in DB\n",
+                "tags": [
+                    "Book"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of books",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Book"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "not found error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Adds a new book",
+                "description": "This route adds a new book to the database",
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "query",
+                        "description": "full name of the author",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "title of the book",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "publisher",
+                        "in": "query",
+                        "description": "company name of the publisher",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "release",
+                        "in": "query",
+                        "description": "release date of the book",
+                        "required": true,
+                        "type": "string",
+                        "format": "date"
+                    }
+                ],
+                "tags": [
+                    "Book"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "the added book",
+                        "schema": {
+                            "$ref": "#/definitions/Book"
+                        }
+                    },
+                    "default": {
+                        "description": "not found error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/books/bookid": {
+            "get": {
+                "summary": "Get specific book by id",
+                "description": "The get Book route returns information about a specific Book available in DB selected by id\n",
+                "tags": [
+                    "Book"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "the found book",
+                        "schema": {
+                            "$ref": "#/definitions/Book"
+                        }
+                    },
+                    "default": {
+                        "description": "not found error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Updates an existing book",
+                "description": "This route updates information about an existing book to the database",
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "query",
+                        "description": "full name of the author",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "title of the book",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "publisher",
+                        "in": "query",
+                        "description": "company name of the publisher",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "release",
+                        "in": "query",
+                        "description": "release date of the book",
+                        "required": false,
+                        "type": "string",
+                        "format": "date"
+                    }
+                ],
+                "tags": [
+                    "Book"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "the updated book",
+                        "schema": {
+                            "$ref": "#/definitions/Book"
+                        }
+                    },
+                    "default": {
+                        "description": "not found error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a specific book by id",
+                "description": "Deletes a book from DB by ID",
+                "tags": [
+                    "Book"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "information about the deleted book",
+                        "schema": {
+                            "$ref": "#/definitions/DeletedObject"
+                        }
+                    },
+                    "default": {
+                        "description": "not found error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Book": {
+            "type": "object",
+            "properties": {
+                "_v": {
+                    "type": "string",
+                    "description": "version key"
+                },
+                "_id": {
+                    "type": "string",
+                    "description": "Unique identifier representing a specific book."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "title of the book"
+                },
+                "author": {
+                    "type": "string",
+                    "description": "full name of the author"
+                },
+                "publisher": {
+                    "type": "string",
+                    "description": "company name of the publisher"
+                },
+                "release": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "date of release of book"
+                },
+                "updated": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "last update timestamp of this entity"
+                }
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "statusCode": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "HTML-Code of error"
+                },
+                "msg": {
+                    "type": "string",
+                    "description": "message send describing the error"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "name of the error type in words"
+                }
+            }
+        },
+        "DeletedObject": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "description": "messae send describing what was deleted"
+                },
+                "deleted": {
+                    "type": "boolean",
+                    "description": "shows status of deletion of item"
+                },
+                "itemId": {
+                    "type": "string",
+                    "description": "the unique ID of the deleted item"
+                }
+            }
+        }
+    }
+}
