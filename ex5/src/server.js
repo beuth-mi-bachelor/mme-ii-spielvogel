@@ -53,18 +53,18 @@ router.route('/books')
         book.save(function (err) {
             if (err) {
                 res.statusCode = 400;
-                return res.json(notFound);
+                return res.json(badRequest);
             }
-            res.statusCode = 200;
+            res.statusCode = 201;
             res.json(book);
         });
     })
     .get(function (req, res) {
         "use strict";
-        Book.find(function (err, books) {
+        Book.find(req.query, function (err, books) {
             if (err) {
                 res.statusCode = 400;
-                return res.json(notFound);
+                return res.json(badRequest);
             }
             res.statusCode = 200;
             res.json(books);
@@ -106,7 +106,7 @@ router.route('/books/:book_id')
                     res.statusCode = 400;
                     return res.json(badRequest);
                 }
-                res.statusCode = 200;
+                res.statusCode = 201;
                 res.json(book);
             });
 
@@ -127,9 +127,9 @@ router.route('/books/:book_id')
             book.remove(function (err) {
                 if (err) {
                     res.statusCode = 400;
-                    return res.json(notFound);
+                    return res.json(badRequest);
                 }
-                res.statusCode = 200;
+                res.statusCode = 204;
                 res.json({
                     message: "deleted book",
                     deleted: true,

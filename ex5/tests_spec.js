@@ -22,6 +22,7 @@ frisby.create('Start Server')
 
 frisby.create('Add Book')
     .post('http://localhost:' + PORT + '/api/books', testItem)
+    .expectStatus(201)
     .expectJSONTypes({
         name: String,
         description: String,
@@ -53,7 +54,7 @@ frisby.create('Add Book')
 
         frisby.create('Update Book ' + book._id)
             .put('http://localhost:' + PORT + '/api/books/' + book._id, testItem2)
-            .expectStatus(200)
+            .expectStatus(201)
             .expectHeaderContains('content-type', 'application/json')
             .afterJSON(function (updateBook) {
                 frisby.create('Read Book ' + updateBook._id)
@@ -69,17 +70,7 @@ frisby.create('Add Book')
                     .afterJSON(function (val) {
                         frisby.create('Delete Book ' + val._id)
                             .delete('http://localhost:' + PORT + '/api/books/' + val._id)
-                            .expectStatus(200)
-                            .expectHeaderContains('content-type', 'application/json')
-                            .afterJSON(function (deletedItem) {
-                                frisby.create('Read Book ' + deletedItem.itemId)
-                                    .get('http://localhost:' + PORT + '/api/books/' + deletedItem.itemId)
-                                    .expectStatus(404)
-                                    .expectJSON({
-                                        statusCode: 404
-                                    })
-                                    .toss();
-                            })
+                            .expectStatus(204)
                             .toss();
                     })
                     .toss();
