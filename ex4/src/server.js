@@ -6,7 +6,7 @@ var express = require('express'),
 
 var error = {
     type: "error",
-    statusCode : 404,
+    statusCode: 404,
     msg: "Requested resource not found"
 };
 
@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
-var mongoose   = require('mongoose');
+var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/mme-ii');
 
 var args = process.argv.slice(2),
@@ -29,20 +29,13 @@ var routing = express.Router();
 var docRoute = express.Router();
 
 
-router.get('/', function(req, res) {
+router.get('/', function (req, res) {
     "use strict";
-    res.json({ message: 'hello world' });
+    res.json({message: 'hello world'});
 });
-
-/*
-docRoute.get('/docs', function(req, res) {
-    "use strict";
-    res.json({ message: 'hello world' });
-});
-*/
 
 router.route('/books')
-    .post(function(req, res) {
+    .post(function (req, res) {
         "use strict";
         var book = new Book();
 
@@ -53,41 +46,49 @@ router.route('/books')
         book.author = req.body.author;
         book.updated = new Date();
 
-        book.save(function(err) {
+        book.save(function (err) {
             if (err) {
+                res.statusCode = 400;
                 return res.json(error);
             }
+            res.statusCode = 200;
             res.json(book);
         });
     })
-    .get(function(req, res) {
+    .get(function (req, res) {
         "use strict";
-        Book.find(function(err, books) {
+        Book.find(function (err, books) {
             if (err) {
+                res.statusCode = 400;
                 return res.json(error);
             }
+            res.statusCode = 200;
             res.json(books);
         });
     });
 
 router.route('/books/:book_id')
-    .get(function(req, res) {
+    .get(function (req, res) {
         "use strict";
-        Book.findById(req.params.book_id, function(err, book) {
+        Book.findById(req.params.book_id, function (err, book) {
             if (err) {
+                res.statusCode = 404;
                 return res.json(error);
             }
             if (book === null) {
+                res.statusCode = 404;
                 return res.json(error);
             }
+            res.statusCode = 200;
             res.json(book);
         });
     })
-    .put(function(req, res) {
+    .put(function (req, res) {
         "use strict";
-        Book.findById(req.params.book_id, function(err, book) {
+        Book.findById(req.params.book_id, function (err, book) {
 
             if (err) {
+                res.statusCode = 404;
                 return res.json(error);
             }
 
@@ -98,27 +99,40 @@ router.route('/books/:book_id')
             book.author = req.body.author;
             book.updated = new Date();
 
-            book.save(function(err) {
+            book.save(function (err) {
                 if (err) {
+                    res.statusCode = 400;
                     return res.json(error);
                 }
+                res.statusCode = 200;
                 res.json(book);
             });
 
         });
     })
-    .delete(function(req, res) {
+    .delete(function (req, res) {
         "use strict";
-        Book.remove({
-            _id: req.params.book_id
-        }, function(err, book) {
+
+        Book.findById(req.params.book_id, function (err, book) {
             if (err) {
-                res.json(error);
+                res.statusCode = 404;
+                return res.json(error);
             }
-            res.json({
-                message: "deleted book",
-                deleted: true,
-                itemId:  req.params.book_id
+            if (book === null) {
+                res.statusCode = 404;
+                return res.json(error);
+            }
+            book.remove(function (err) {
+                if (err) {
+                    res.statusCode = 400;
+                    return res.json(error);
+                }
+                res.statusCode = 200;
+                res.json({
+                    message: "deleted book",
+                    deleted: true,
+                    itemId: req.params.book_id
+                });
             });
         });
     });
@@ -126,14 +140,14 @@ router.route('/books/:book_id')
 routing.use(express.static(__dirname + '/' + pubDirName));
 docRoute.use(express.static(__dirname + '/docs'));
 
-app.get("/hello", function(req, res){
+app.get("/hello", function (req, res) {
     "use strict";
     res.send("Hello World!");
 });
 
-routing.get(/^(.+)$/, function(req, res){
+routing.get(/^(.+)$/, function (req, res) {
     "use strict";
-    res.sendFile(__dirname + req.params[0], function(err, result) {
+    res.sendFile(__dirname + req.params[0], function (err, result) {
         var html = "<ul>";
         if (err.status === 404) {
             fs.readdir(__dirname + "/" + pubDirName + req.params[0], function (err, files) {
@@ -152,7 +166,7 @@ routing.get(/^(.+)$/, function(req, res){
     });
 });
 
-docRoute.get(/^(.+)$/, function(req, res){
+docRoute.get(/^(.+)$/, function (req, res) {
     "use strict";
     console.log(req.params[0]);
     res.sendFile(__dirname + req.params[0]);

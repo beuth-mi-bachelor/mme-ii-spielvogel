@@ -17,14 +17,13 @@ var testItem2 = {
     release: new Date(1223455434)
 };
 
-
 frisby.create('Start Server')
-    .get('http://localhost:'+PORT+'/api')
+    .get('http://localhost:' + PORT + '/api')
     .expectStatus(200)
     .toss();
 
 frisby.create('Add Book')
-    .post('http://localhost:'+PORT+'/api/books', testItem)
+    .post('http://localhost:' + PORT + '/api/books', testItem)
     .expectJSONTypes({
         name: String,
         publisher: String,
@@ -33,17 +32,17 @@ frisby.create('Add Book')
         release: String,
         _id: String
     })
-    .afterJSON(function(book) {
+    .afterJSON(function (book) {
         "use strict";
 
         frisby.create('Read Books')
-            .get('http://localhost:'+PORT+'/api/books')
+            .get('http://localhost:' + PORT + '/api/books')
             .expectStatus(200)
             .expectHeaderContains('content-type', 'application/json')
             .toss();
 
         frisby.create('Read Book ' + book._id)
-            .get('http://localhost:'+PORT+'/api/books/' + book._id)
+            .get('http://localhost:' + PORT + '/api/books/' + book._id)
             .expectStatus(200)
             .expectHeaderContains('content-type', 'application/json')
             .expectJSON({
@@ -51,12 +50,12 @@ frisby.create('Add Book')
                 publisher: testItem.publisher,
                 author: testItem.author,
                 language: testItem.language,
-                release: function(val) {
+                release: function (val) {
                     var releaseDate = new Date(val);
                     expect(releaseDate).toEqual(jasmine.any(Date));
                     expect(releaseDate).toEqual(testItem.release);
                 },
-                updated: function(val) {
+                updated: function (val) {
                     var updateDate = new Date(val);
                     expect(updateDate).toBeLessThan(new Date());
                 }
@@ -66,12 +65,12 @@ frisby.create('Add Book')
         var oldBook = book;
 
         frisby.create('Update Book ' + book._id)
-            .put('http://localhost:'+PORT+'/api/books/' + book._id, testItem2)
+            .put('http://localhost:' + PORT + '/api/books/' + book._id, testItem2)
             .expectStatus(200)
             .expectHeaderContains('content-type', 'application/json')
-            .afterJSON(function(updateBook) {
+            .afterJSON(function (updateBook) {
                 frisby.create('Read Book ' + updateBook._id)
-                    .get('http://localhost:'+PORT+'/api/books/' + updateBook._id)
+                    .get('http://localhost:' + PORT + '/api/books/' + updateBook._id)
                     .expectStatus(200)
                     .expectHeaderContains('content-type', 'application/json')
                     .expectJSON({
@@ -79,28 +78,27 @@ frisby.create('Add Book')
                         publisher: testItem2.publisher,
                         author: testItem2.author,
                         language: testItem2.language,
-                        release: function(val) {
+                        release: function (val) {
                             var releaseDate = new Date(val);
                             expect(releaseDate).toEqual(jasmine.any(Date));
                             expect(releaseDate).toEqual(testItem2.release);
                         },
-                        updated: function(val) {
+                        updated: function (val) {
                             var updateDate = new Date(val);
                             expect(updateDate).toBeLessThan(new Date());
                             expect(updateDate).toBeGreaterThan(new Date(oldBook.updated));
 
                         }
                     })
-                    .afterJSON(function(val) {
+                    .afterJSON(function (val) {
                         frisby.create('Delete Book ' + val._id)
-                            .delete('http://localhost:'+PORT+'/api/books/' + val._id)
+                            .delete('http://localhost:' + PORT + '/api/books/' + val._id)
                             .expectStatus(200)
                             .expectHeaderContains('content-type', 'application/json')
-                            .afterJSON(function(deletedItem) {
+                            .afterJSON(function (deletedItem) {
                                 frisby.create('Read Book ' + deletedItem.itemId)
-                                    .get('http://localhost:'+PORT+'/api/books/' + deletedItem.itemId)
-                                    .expectStatus(200)
-                                    .expectHeaderContains('content-type', 'application/json')
+                                    .get('http://localhost:' + PORT + '/api/books/' + deletedItem.itemId)
+                                    .expectStatus(404)
                                     .expectJSON({
                                         statusCode: 404
                                     })
@@ -109,6 +107,7 @@ frisby.create('Add Book')
                             .toss();
                     })
                     .toss();
+
             })
             .toss();
 
