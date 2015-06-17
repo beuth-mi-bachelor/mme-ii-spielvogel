@@ -26,11 +26,20 @@ var args = process.argv.slice(2),
 
 var router = express.Router();
 var routing = express.Router();
+var docRoute = express.Router();
+
 
 router.get('/', function(req, res) {
     "use strict";
     res.json({ message: 'hello world' });
 });
+
+/*
+docRoute.get('/docs', function(req, res) {
+    "use strict";
+    res.json({ message: 'hello world' });
+});
+*/
 
 router.route('/books')
     .post(function(req, res) {
@@ -115,6 +124,7 @@ router.route('/books/:book_id')
     });
 
 routing.use(express.static(__dirname + '/' + pubDirName));
+docRoute.use(express.static(__dirname + '/docs'));
 
 app.get("/hello", function(req, res){
     "use strict";
@@ -142,7 +152,13 @@ routing.get(/^(.+)$/, function(req, res){
     });
 });
 
+docRoute.get(/^(.+)$/, function(req, res){
+    "use strict";
+    console.log(req.params[0]);
+    res.sendFile(__dirname + req.params[0]);
+});
 
+app.use('/docs', docRoute);
 app.use('/api', router);
 app.use('/public', routing);
 

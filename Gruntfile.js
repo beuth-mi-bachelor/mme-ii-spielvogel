@@ -38,6 +38,12 @@ module.exports = function(grunt) {
                 cwd: 'ex4/src/public',
                 src: ['**'],
                 dest: 'ex4/built/public'
+            },
+            ex4Docs: {
+                expand: true,
+                cwd: 'ex4/src/docs',
+                src: ['**'],
+                dest: 'ex4/built/docs'
             }
         },
         express: {
@@ -78,6 +84,6 @@ module.exports = function(grunt) {
 
     // Default task(s).
     //grunt.registerTask('default', ['express:ex3', 'jasmine_node:ex3', 'uglify:ex3', 'copy:ex3']);
-    grunt.registerTask('default', ['express:ex4', "jasmine_node", 'uglify:ex4', 'copy:ex4']);
+    grunt.registerTask('default', ['express:ex4', "jasmine_node", 'uglify:ex4', 'copy:ex4', 'copy:ex4Docs']);
 
 };
