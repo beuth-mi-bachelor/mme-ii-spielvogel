@@ -2,7 +2,9 @@ var express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
     fs = require('fs'),
-    Book = require('./models/book');
+    Book = require('./models/book'),
+    Author = require('./models/author');
+
 
 var notFound = {
     type: "notFound",
@@ -43,7 +45,29 @@ router.get('/', function (req, res) {
 router.route('/books')
     .post(function (req, res) {
         "use strict";
+
+        var authors = [];
+
+        if (typeof req.body.author === "string") {
+            var author = new Author();
+            author.name = req.body.author;
+            authors.push(author);
+        } else if (typeof req.body.author === "object") {
+            for (var singleAuthor in req.body.author) {
+                if (req.body.author.hasOwnProperty(singleAuthor)) {
+                    var currentAuthor = req.body.author[singleAuthor];
+                    var newAuthor = new Author();
+                    newAuthor.name = currentAuthor;
+                    authors.push(newAuthor);
+                }
+            }
+        }
+
         var book = new Book();
+
+        if (authors.length > 0) {
+            book.author = authors;
+        }
 
         book.name = req.body.name;
         book.description = req.body.description;
@@ -102,6 +126,27 @@ router.route('/books/:book_id')
             if (err) {
                 res.statusCode = 404;
                 return res.json(notFound);
+            }
+
+            var authors = [];
+
+            if (typeof req.body.author === "string") {
+                var author = new Author();
+                author.name = req.body.author;
+                authors.push(author);
+            } else if (typeof req.body.author === "object") {
+                for (var singleAuthor in req.body.author) {
+                    if (req.body.author.hasOwnProperty(singleAuthor)) {
+                        var currentAuthor = req.body.author[singleAuthor];
+                        var newAuthor = new Author();
+                        newAuthor.name = currentAuthor;
+                        authors.push(newAuthor);
+                    }
+                }
+            }
+
+            if (authors.length > 0) {
+                book.author = authors;
             }
 
             book.name = req.body.name;

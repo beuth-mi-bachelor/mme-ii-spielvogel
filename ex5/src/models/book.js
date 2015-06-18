@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    AuthorWrapper = require( './author_wrapper' );
 
 var BookScheema = new Schema({
     name: {
@@ -8,6 +9,10 @@ var BookScheema = new Schema({
         match: /[A-Z][-a-zA-Z\s]+/,
         minLength: 2,
         trim: true
+    },
+    author: {
+        type: [AuthorWrapper],
+        required: true
     },
     description: {
         type: String,

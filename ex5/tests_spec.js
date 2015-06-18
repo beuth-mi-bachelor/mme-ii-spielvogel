@@ -3,6 +3,7 @@ var frisby = require('frisby'),
 
 var testItem = {
     name: "first testName",
+    author: ["Albert"],
     description: "first description test foo bar",
     ISBN: "978 0 596 52068 7",
     state: 1
@@ -10,6 +11,7 @@ var testItem = {
 
 var testItem2 = {
     name: "second testName",
+    author: ["Albert", "Peter"],
     description: "second description test foo bar",
     ISBN: "9780596520687",
     state: 2
@@ -92,13 +94,16 @@ frisby.create('Not found Book with id abcd')
     .toss();
 
 var failItem1 = {
+    "author": ["Albert"],
     "name": "Max Mustermann"
 };
 var failItem2 = {
+    "author": ["Albert"],
     "ISBN": "1-56389-668-0"
 };
 
 var failItem3 = {
+    "author": ["Albert"],
     "name": "Max Mustermann",
     "ISBN": "1 223 232 121 121",
     "state": "abc"
