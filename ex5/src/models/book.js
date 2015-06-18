@@ -4,15 +4,23 @@ var mongoose = require('mongoose'),
 var BookScheema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        match: /[A-Z][-a-zA-Z\s]+/,
+        minLength: 2,
+        trim: true
     },
     description: {
         type: String,
-        required: false
+        required: false,
+        trim: true
     },
     ISBN: {
         type: String,
-        required: true
+        match: /[0-9][-0-9\s]+/,
+        minLength: 10,
+        maxLength: 17,
+        required: true,
+        trim: true
     },
     state: {
         type: Number,

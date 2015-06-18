@@ -1,2 +1,2 @@
-/*! nodeJS-Server - v0.0.1 - 2015-06-17 */
-var mongoose=require("mongoose"),Schema=mongoose.Schema,BookScheema=new Schema({name:{type:String,required:!0},description:{type:String,required:!1},ISBN:{type:String,required:!0},state:{type:Number,required:!1,"default":0}});module.exports=mongoose.model("Books",BookScheema);
+/*! nodeJS-Server - v0.0.1 - 2015-06-18 */
+var mongoose=require("mongoose"),Schema=mongoose.Schema,BookScheema=new Schema({name:{type:String,required:!0,match:/[A-Z][-a-zA-Z\s]+/,minLength:2,trim:!0},description:{type:String,required:!1,trim:!0},ISBN:{type:String,match:/[0-9][-0-9\s]+/,minLength:10,maxLength:17,required:!0,trim:!0},state:{type:Number,required:!1,"default":0}});module.exports=mongoose.model("Books",BookScheema);

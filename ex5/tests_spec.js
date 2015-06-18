@@ -4,14 +4,14 @@ var frisby = require('frisby'),
 var testItem = {
     name: "first testName",
     description: "first description test foo bar",
-    ISBN: "1234-5678-9123-123",
+    ISBN: "978 0 596 52068 7",
     state: 1
 };
 
 var testItem2 = {
     name: "second testName",
     description: "second description test foo bar",
-    ISBN: "2345-6789-1234-1234",
+    ISBN: "9780596520687",
     state: 2
 };
 
@@ -78,5 +78,56 @@ frisby.create('Add Book')
             })
             .toss();
 
+    })
+    .toss();
+
+// testing 404
+frisby.create('Not found Book with id abcd')
+    .get('http://localhost:' + PORT + '/api/books/abcd')
+    .expectStatus(404)
+    .expectHeaderContains('content-type', 'application/json')
+    .expectJSON({
+        statusCode: 404
+    })
+    .toss();
+
+var failItem1 = {
+    "name": "Max Mustermann"
+};
+var failItem2 = {
+    "ISBN": "1-56389-668-0"
+};
+
+var failItem3 = {
+    "name": "Max Mustermann",
+    "ISBN": "1 223 232 121 121",
+    "state": "abc"
+};
+
+// testing 400
+frisby.create('Add data when missing ISBN')
+    .post('http://localhost:' + PORT + '/api/books', failItem1)
+    .expectStatus(400)
+    .expectHeaderContains('content-type', 'application/json')
+    .expectJSON({
+        statusCode: 400
+    })
+    .toss();
+
+frisby.create('Add data when missing name')
+    .post('http://localhost:' + PORT + '/api/books', failItem2)
+    .expectStatus(400)
+    .expectHeaderContains('content-type', 'application/json')
+    .expectJSON({
+        statusCode: 400
+    })
+    .toss();
+
+frisby.create('Add data when wrong state')
+    .post('http://localhost:' + PORT + '/api/books', failItem3)
+    .expectStatus(400)
+    .expectHeaderContains('content-type', 'application/json')
+    .expectJSON({
+        statusCode: 400
     })
     .toss();

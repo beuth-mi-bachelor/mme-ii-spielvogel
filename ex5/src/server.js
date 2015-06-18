@@ -50,14 +50,22 @@ router.route('/books')
         book.ISBN = req.body.ISBN;
         book.state = req.body.state;
 
-        book.save(function (err) {
+        book.validate(function (err) {
             if (err) {
                 res.statusCode = 400;
                 return res.json(badRequest);
+            } else {
+                book.save(function (err) {
+                    if (err) {
+                        res.statusCode = 400;
+                        return res.json(badRequest);
+                    }
+                    res.statusCode = 201;
+                    res.json(book);
+                });
             }
-            res.statusCode = 201;
-            res.json(book);
         });
+
     })
     .get(function (req, res) {
         "use strict";
@@ -101,13 +109,20 @@ router.route('/books/:book_id')
             book.ISBN = req.body.ISBN;
             book.state = req.body.state;
 
-            book.save(function (err) {
+            book.validate(function (err) {
                 if (err) {
                     res.statusCode = 400;
                     return res.json(badRequest);
+                } else {
+                    book.save(function (err) {
+                        if (err) {
+                            res.statusCode = 400;
+                            return res.json(badRequest);
+                        }
+                        res.statusCode = 201;
+                        res.json(book);
+                    });
                 }
-                res.statusCode = 201;
-                res.json(book);
             });
 
         });
