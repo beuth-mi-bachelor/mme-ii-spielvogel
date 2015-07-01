@@ -5,7 +5,13 @@
  */
 
 
-window.onload = function () {
+window.onload = (function ($) {
     "use strict";
 
-};
+    $.ajax({
+        method: "GET",
+        url: "test.js",
+        dataType: "script"
+    });
+
+}(jQuery));

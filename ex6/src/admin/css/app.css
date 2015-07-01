@@ -15,3 +15,20 @@ body * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
 }
+body {
+    margin-top: 70px;
+}
+.table>tbody>tr>td {
+    vertical-align: middle;
+}
+.table>tbody>tr>td .delete,
+.table>tbody>tr>td .edit {
+    margin: 0 5px;
+    cursor: pointer;
+}
+.table>tbody>tr>td .delete:hover {
+    color: #db0000;
+}
+.table>tbody>tr>td .edit:hover {
+    color: #dbdb00;
+}
