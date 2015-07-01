@@ -35,7 +35,7 @@ var args = process.argv.slice(2),
 var router = express.Router();
 var routing = express.Router();
 var docRoute = express.Router();
-
+var adminRoute = express.Router();
 
 router.get('/', function (req, res) {
     "use strict";
@@ -201,6 +201,7 @@ router.route('/books/:book_id')
 
 routing.use(express.static(__dirname + '/' + pubDirName));
 docRoute.use(express.static(__dirname + '/docs'));
+adminRoute.use(express.static(__dirname + '/admin'));
 
 app.get("/hello", function (req, res) {
     "use strict";
@@ -236,6 +237,7 @@ docRoute.get(/^(.+)$/, function (req, res) {
 app.use('/docs', docRoute);
 app.use('/api', router);
 app.use('/public', routing);
+app.use('/admin', adminRoute);
 
 var server = app.listen(port, function () {
     "use strict";

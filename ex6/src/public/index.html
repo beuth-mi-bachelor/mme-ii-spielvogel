@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head lang="de">
-    <title>MME II: Exercise 4</title>
+    <title>MME II: Exercise 1</title>
 
     <meta charset="UTF-8">
     <meta name="author" content="Michael Duve">
-    <meta name="description" lang="de" content="Dies ist Aufgabe 4 im Kurs Multimedia-Engineering der Beuth Hochschule">
+    <meta name="description" lang="de" content="Dies ist Aufgabe 1 im Kurs Multimedia-Engineering der Beuth Hochschule">
     <meta name="keywords" lang="de" content="Javascript, HTML, CSS, Multimedia-Engineering">
     <meta name="viewport" content="width=device-width, user-scalable=yes">
     <meta name="format-detection" content="telephone=no">
@@ -15,6 +15,45 @@
     <link rel="stylesheet" href="css/font-awesome.min.css">
 </head>
 <body>
-<script type="text/javascript" src="js/app.js"></script>
+
+    <div id="video-test" class="content-wrapper">
+
+        <h1 class="main-heading">
+            <span class="kicker">Exercise 1: MME II</span>
+            <span class="headline">Videoplayer Example</span>
+        </h1>
+
+        <video id="video-oceans" class="video" poster="video/oceans/oceans.jpg" controls>
+            <source src="video/oceans/oceans.mp4" type="video/mp4">
+            <source src="video/oceans/oceans.ogv" type="video/ogg">
+            <source src="video/oceans/oceans.webm" type="video/webm">
+            <img src="video/oceans/oceans.jpg" alt="Video Fallback Image: Oceans">
+        </video>
+
+        <canvas id="canvas-video" width="960" height="400" class="canvas-video"><!--style="background: url(video/oceans/oceans.jpg) no-repeat 0 0;">--></canvas>
+
+        <input type="range" class="progress" id="progressbar" value="0" step="1" min="0" max="100" />
+        <p class="time-display">Time: <span id="time-current"></span>/<span id="time-full"></span></p>
+        <ul class="controls">
+            <li class="control">
+                <button id="toggle-playing" class="fa fa-play"></button>
+            </li>
+            <li class="control">
+                <button id="stop" class="fa fa-stop"></button>
+            </li>
+            <li class="control">
+                <button id="fullscreen" class="fa fa-expand"></button>
+            </li>
+            <li class="control">
+                <button id="greyscale" class="fa fa-circle"> greyscale</button>
+            </li>
+            <li class="control">
+                <button id="blur" class="fa fa-circle"> blur</button>
+            </li>
+        </ul>
+
+    </div>
+
+    <script type="text/javascript" src="js/app.js"></script>
 </body>
 </html>
