@@ -93,14 +93,24 @@ router.route('/books')
     })
     .get(function (req, res) {
         "use strict";
-        Book.find(req.query, function (err, books) {
-            if (err) {
-                res.statusCode = 400;
-                return res.json(badRequest);
-            }
-            res.statusCode = 200;
-            res.json(books);
-        });
+
+        var paginate = req.query.rpp || 20;
+        var page = req.query.page || 1;
+
+        delete req.query.rpp;
+        delete req.query.page;
+
+        Book.find(req.query)
+            .skip((page-1)*paginate)
+            .limit(paginate)
+            .exec(function (err, books) {
+                if (err) {
+                    res.statusCode = 400;
+                    return res.json(badRequest);
+                }
+                res.statusCode = 200;
+                res.json(books);
+            });
     });
 
 router.route('/books/:book_id')
