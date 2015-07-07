@@ -22,6 +22,18 @@ frisby.create('Start Server')
     .expectStatus(200)
     .toss();
 
+frisby.create('Test Pagination')
+    .get('http://localhost:' + PORT + '/api/books?page=1&rpp=2')
+    .expectStatus(200)
+    .expectJSONLength(2)
+    .toss();
+
+frisby.create('Test Pagination')
+    .get('http://localhost:' + PORT + '/api/books?page=2&rpp=5')
+    .expectStatus(200)
+    .expectJSONLength(5)
+    .toss();
+
 frisby.create('Add Book')
     .post('http://localhost:' + PORT + '/api/books', testItem)
     .expectStatus(201)

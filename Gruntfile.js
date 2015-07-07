@@ -159,7 +159,7 @@ module.exports = function(grunt) {
     // Default task(s).
     //grunt.registerTask('default', ['express:ex3', 'jasmine_node:ex3', 'uglify:ex3', 'copy:ex3']);
     //grunt.registerTask('default', ['express:ex4', "jasmine_node", 'uglify:ex4', 'copy:ex4', 'copy:ex4Docs']);
-    //grunt.registerTask('default', ['express:ex5', "jasmine_node", 'uglify:ex5', 'copy:ex5', 'copy:ex5Docs', 'copy:ex5Models']);
-    grunt.registerTask('default', ['express:ex6', "jasmine_node", 'uglify:ex6', 'copy:ex6', 'copy:ex6Docs', 'copy:ex6Models', 'copy:ex6Adm']);
+    grunt.registerTask('default', ['express:ex5', "jasmine_node", 'uglify:ex5', 'copy:ex5', 'copy:ex5Docs', 'copy:ex5Models']);
+    //grunt.registerTask('default', ['express:ex6', 'uglify:ex6', 'copy:ex6', 'copy:ex6Docs', 'copy:ex6Models', 'copy:ex6Adm']);
 
 };
