@@ -32,3 +32,27 @@ body {
 .table>tbody>tr>td .edit:hover {
     color: #dbdb00;
 }
+.table .authors {
+    white-space: nowrap;
+}
+.table .authors:after {
+    content: ", ";
+}
+.table .authors:last-child:after {
+    content: "";
+}
+.delete-author {
+    cursor: pointer;
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #a94442;
+}
+.input-group {
+    margin: 10px 0;
+}
+.input-group:first-child {
+    margin-top: 0;
+}
+.input-group:last-child {
+    margin-bottom: 0;
+}

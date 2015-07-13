@@ -42,7 +42,7 @@ angular.module('libraryApp', [])
     .controller('BookController', function($scope, $http) {
 
         $scope.getAll = function(toggle) {
-            $http.get(apiUrl).then(function(resp) {
+            $http.get(apiUrl + "?rpp=0").then(function(resp) {
                 $scope.books = resp.data;
                 if (toggle) {
                     toggleNav("#collapseList");
@@ -90,10 +90,28 @@ angular.module('libraryApp', [])
             $http.put(apiUrl+item._id, item).then(function() {
                 toggleNav("#collapseList");
                 $scope.hideAllNotifications();
+                $scope.getAll();
             }, function(err) {
                 errorHandler(err);
             });
 
+        };
+
+        $scope.myFilter = function (item) {
+            if (!$scope.search) {
+                return true;
+            }
+            var nameFound = false;
+            var descriptionFound = false;
+
+            if (item.name) {
+                nameFound = (item.name.indexOf($scope.search) > -1);
+            }
+            if (item.description) {
+                descriptionFound = (item.description.indexOf($scope.search) > -1);
+            }
+
+            return nameFound || descriptionFound;
         };
 
         // HELPER
@@ -133,6 +151,6 @@ angular.module('libraryApp', [])
 
 function toggleNav(item) {
     $('.panel-collapse:not('+item+')').collapse("hide");
-    $(item).collapse("toggle");
+    $(item).collapse("show");
 }
 

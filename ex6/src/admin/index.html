@@ -42,11 +42,6 @@
                     <a data-toggle="collapse" data-parent="#collapseAdd" href="#collapseAdd">Add book</a>
                 </li>
             </ul>
-            <div class="navbar-form navbar-right col-xs-5">
-                <div class="input-group">
-                    <input type="text" class="form-control" ng-model="search" ng-focus="getAll(true)" placeholder="Search for...">
-                </div>
-            </div>
         </div>
 
 
@@ -63,10 +58,15 @@
 <div class="panel content-wrapper col-xs-12">
     <div class="panel-group" id="accordion">
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
+            <div class="panel-heading clearfix" style="padding-top: 0; padding-bottom: 0;">
+                <h4 class="panel-title pull-left" style="padding: 15px 0;">
                     All books
                 </h4>
+                <div class="navbar-form pull-right col-xs-5" style="margin: 0; padding: 6px 0;">
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="search" ng-focus="getAll(true)" placeholder="Search for...">
+                    </div>
+                </div>
             </div>
             <div id="collapseList" class="panel-collapse collapse">
                 <div class="panel-body">
@@ -82,7 +82,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="book in books | filter:search">
+                            <tr ng-repeat="book in books | filter:myFilter as results">
                                 <td>{{book.ISBN}}</td>
                                 <td>{{book.name}}</td>
                                 <td>{{book.description}}</td>
@@ -94,7 +94,7 @@
                             <tfoot>
                             <tr>
                                 <td colspan="5" class="text-center">
-                                    <em>There are {{books.length}} books available</em>
+                                    <em>Found {{results.length}} books</em>
                                 </td>
                             </tr>
                             </tfoot>

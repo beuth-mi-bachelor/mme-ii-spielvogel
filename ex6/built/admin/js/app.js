@@ -1,6 +1,6 @@
 "use strict";
 
-/*global $*/
+/*global $,angular*/
 
 /**
  * MME exercise 6
@@ -8,118 +8,149 @@
  * matnr: 798419
  */
 
-var pathToApi = "/api/books";
+var apiUrl = 'http://localhost:1337/api/books/';
 
 $(document).ready(function() {
 
-    var $body = $("body");
-
-    var bookSource   = $("#book-list-template").html();
-    var bookListTemplate = Handlebars.compile(bookSource);
-
-    var notificationSource   = $("#notification-template").html();
-    var notificationTemplate = Handlebars.compile(notificationSource);
-
-    var editSource   = $("#book-form-template").html();
-    var editTemplate = Handlebars.compile(editSource);
-
-    scroll_if_anchor(window.location.hash);
-    $body.on("click", "a[href^='#']", scroll_if_anchor);
-
-    $(".navbar-nav").on("click", "li a", function() {
-        var $listItem = $(this).parent();
-
-        if ($listItem.hasClass("active")) {
-            return false;
-        }
-
-        $(".navbar-nav .active").removeClass("active");
-        $listItem.addClass("active");
-
-    });
-
-    $body.on("click", ".delete", function() {
-        var id = $(this).data("delete-book");
-        deleteBook(id, function(data) {
-            $(".notification-container").html(notificationTemplate(data));
-        });
-    });
-
-    $body.on("click", ".edit", function() {
-        var id = $(this).data("edit-book");
-        editBook(id, function(data) {
-            console.log(data);
-        });
-    });
-
-    $("#addbook").submit(function(e) {
-        var data = {};
-        $(this).serializeArray().map(function(x){
-            if (x.value && x.value !== null && x.value !== "") {
-                data[x.name] = x.value;
-            }
-        });
-        if (data.state) {
-            data.state = 1;
-        }
-        if (data.author) {
-            data.author = data.author.split(",");
-        }
-        console.log(data);
+    $(".nav.navbar-nav").on("click", "li a", function(e) {
+        $(this).parent().parent().find("li.active").removeClass("active");
+        $(this).parent().addClass("active");
+        e.stopPropagation();
         e.preventDefault();
-        return false;
+        var href = $(this).attr("href");
+        toggleNav(href);
     });
 
-    getAllBooks(function(books) {
-        $(".book-list").html(bookListTemplate(books));
+    $('.panel-collapse').on('show.bs.collapse', function () {
+        var id = $(this).attr("id");
+        var currentItem = $("a[href=#"+id+"]");
+        if (currentItem) {
+            currentItem.parent().addClass("active");
+        }
+    }).on('hide.bs.collapse', function () {
+        var id = $(this).attr("id");
+        var currentItem = $("a[href=#"+id+"]");
+        if (currentItem) {
+            currentItem.parent().removeClass("active");
+        }
     });
+
 });
 
-function getAllBooks(_callback) {
-    $.ajax({
-        method: "GET",
-        url: pathToApi,
-        dataType: "json"
-    }).success(function(data) {
-        _callback(data);
-    });
-}
+angular.module('libraryApp', [])
 
-function deleteBook(id, _callback) {
-    $.ajax({
-        method: "DELETE",
-        url: pathToApi + "/" + id,
-        dataType: "json"
-    }).success(function() {
-        _callback(id);
-    });
-}
+    .controller('BookController', function($scope, $http) {
 
-function editBook(id, _callback) {
-    $.ajax({
-        method: "GET",
-        url: pathToApi + "/" + id,
-        dataType: "json"
-    }).success(function() {
-        _callback(id);
-    });
-}
+        $scope.getAll = function(toggle) {
+            $http.get(apiUrl + "?rpp=0").then(function(resp) {
+                $scope.books = resp.data;
+                if (toggle) {
+                    toggleNav("#collapseList");
+                }
+            }, function(err) {
+                errorHandler(err);
+            });
+        };
 
-function scroll_if_anchor(href) {
-    href = typeof(href) === "string" ? href : $(this).attr("href");
-    if (!href || $(this).attr("data-parent") === "#accordion") {
-        return;
-    }
-    var fromTop = 70,
-        $target = $(href);
+        $scope.deleteBook = function(id, toggle) {
+            $http.delete(apiUrl+id).then(function() {
+                if (toggle) {
+                    toggleNav("#collapseList");
+                }
+                $scope.getAll();
+            }, function(err) {
+                errorHandler(err);
+            });
+        };
 
-    // Older browsers without pushState might flicker here, as they momentarily
-    // jump to the wrong position (IE < 10)
-    if($target.length) {
-        $('html, body').animate({ scrollTop: $target.offset().top - fromTop });
-        if(history && "pushState" in history) {
-            history.pushState({}, document.title, window.location.pathname + href);
-            return false;
+        $scope.editBook = function(id) {
+            $http.get(apiUrl+id).then(function(resp) {
+                $scope.editBookData = resp.data;
+                toggleNav("#collapseEdit");
+                $scope.hideAllNotifications();
+            }, function(err) {
+                errorHandler(err);
+            });
+        };
+
+        $scope.addBook = function(addBookData) {
+
+            $http.post(apiUrl, addBookData).then(function() {
+                toggleNav("#collapseList");
+                $scope.hideAllNotifications();
+                $scope.getAll();
+            }, function(err) {
+                errorHandler(err);
+            });
+
+        };
+
+        $scope.updateBook = function(item) {
+
+            $http.put(apiUrl+item._id, item).then(function() {
+                toggleNav("#collapseList");
+                $scope.hideAllNotifications();
+                $scope.getAll();
+            }, function(err) {
+                errorHandler(err);
+            });
+
+        };
+
+        $scope.myFilter = function (item) {
+            if (!$scope.search) {
+                return true;
+            }
+            var nameFound = false;
+            var descriptionFound = false;
+
+            if (item.name) {
+                nameFound = (item.name.indexOf($scope.search) > -1);
+            }
+            if (item.description) {
+                descriptionFound = (item.description.indexOf($scope.search) > -1);
+            }
+
+            return nameFound || descriptionFound;
+        };
+
+        // HELPER
+        $scope.showState = function(input) {
+            return input === 1 ? 'online' : 'offline';
+        };
+
+        $scope.showChecked = function(input) {
+            return input === 1 ? 'checked' : '';
+        };
+
+        $scope.hideNotification = function(id) {
+            $scope.errObj.errors[id].show = false;
+        };
+
+        $scope.hideAllNotifications = function() {
+            $scope.errObj = {};
+        };
+
+        function errorHandler(err) {
+            $scope.errObj = {};
+            if (err.status === 400) {
+                $scope.errObj.msg = err.data.msg;
+                $scope.errObj.errors = err.data.errors;
+                for (var error in $scope.errObj.errors) {
+                    if ($scope.errObj.errors.hasOwnProperty(error)) {
+                        $scope.errObj.errors[error].show = true;
+                    }
+                }
+                $scope.errObj.show = true;
+            } else {
+                console.error(err);
+            }
         }
-    }
+
+    });
+
+function toggleNav(item) {
+    $('.panel-collapse:not('+item+')').collapse("hide");
+    $(item).collapse("show");
 }
+
