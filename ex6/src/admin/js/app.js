@@ -11,19 +11,28 @@
 var apiUrl = 'http://localhost:1337/api/books/';
 
 $(document).ready(function() {
-    $(".nav.navbar-nav").on("click", "li", function() {
-        $("li.active").removeClass("active");
-        $(this).addClass("active");
+
+    $(".nav.navbar-nav").on("click", "li a", function(e) {
+        $(this).parent().parent().find("li.active").removeClass("active");
+        $(this).parent().addClass("active");
+        e.stopPropagation();
+        e.preventDefault();
+        var href = $(this).attr("href");
+        toggleNav(href);
     });
 
     $('.panel-collapse').on('show.bs.collapse', function () {
         var id = $(this).attr("id");
-        var currentItem = $("a[href=#"+id+"]").parent();
-        currentItem.addClass("active");
+        var currentItem = $("a[href=#"+id+"]");
+        if (currentItem) {
+            currentItem.parent().addClass("active");
+        }
     }).on('hide.bs.collapse', function () {
         var id = $(this).attr("id");
-        var currentItem = $("a[href=#"+id+"]").parent();
-        currentItem.removeClass("active");
+        var currentItem = $("a[href=#"+id+"]");
+        if (currentItem) {
+            currentItem.parent().removeClass("active");
+        }
     });
 
 });
@@ -32,9 +41,12 @@ angular.module('libraryApp', [])
 
     .controller('BookController', function($scope, $http) {
 
-        $scope.getAll = function() {
+        $scope.getAll = function(toggle) {
             $http.get(apiUrl).then(function(resp) {
                 $scope.books = resp.data;
+                if (toggle) {
+                    toggleNav("#collapseList");
+                }
             }, function(err) {
                 errorHandler(err);
             });
@@ -43,7 +55,7 @@ angular.module('libraryApp', [])
         $scope.deleteBook = function(id, toggle) {
             $http.delete(apiUrl+id).then(function() {
                 if (toggle) {
-                    $('#collapseList').collapse("toggle");
+                    toggleNav("#collapseList");
                 }
                 $scope.getAll();
             }, function(err) {
@@ -54,8 +66,7 @@ angular.module('libraryApp', [])
         $scope.editBook = function(id) {
             $http.get(apiUrl+id).then(function(resp) {
                 $scope.editBookData = resp.data;
-                $('#collapseList').collapse("hide");
-                $('#collapseEdit').collapse("toggle");
+                toggleNav("#collapseEdit");
                 $scope.hideAllNotifications();
             }, function(err) {
                 errorHandler(err);
@@ -65,7 +76,7 @@ angular.module('libraryApp', [])
         $scope.addBook = function(addBookData) {
 
             $http.post(apiUrl, addBookData).then(function() {
-                $('#collapseList').collapse("toggle");
+                toggleNav("#collapseList");
                 $scope.hideAllNotifications();
                 $scope.getAll();
             }, function(err) {
@@ -77,7 +88,7 @@ angular.module('libraryApp', [])
         $scope.updateBook = function(item) {
 
             $http.put(apiUrl+item._id, item).then(function() {
-                $('#collapseList').collapse("toggle");
+                toggleNav("#collapseList");
                 $scope.hideAllNotifications();
             }, function(err) {
                 errorHandler(err);
@@ -113,11 +124,15 @@ angular.module('libraryApp', [])
                     }
                 }
                 $scope.errObj.show = true;
-                console.log( $scope.errObj);
             } else {
                 console.error(err);
             }
         }
 
     });
+
+function toggleNav(item) {
+    $('.panel-collapse:not('+item+')').collapse("hide");
+    $(item).collapse("toggle");
+}
 

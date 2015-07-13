@@ -36,13 +36,20 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li ng-click="getAll()">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseList">All books</a>
+                    <a data-toggle="collapse" data-parent="#collapseList" href="#collapseList">All books</a>
                 </li>
                 <li>
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseAdd">Add book</a>
+                    <a data-toggle="collapse" data-parent="#collapseAdd" href="#collapseAdd">Add book</a>
                 </li>
             </ul>
+            <div class="navbar-form navbar-right col-xs-5">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="search" ng-focus="getAll(true)" placeholder="Search for...">
+                </div>
+            </div>
         </div>
+
+
     </div>
 </nav>
 
@@ -58,7 +65,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseList">All books</a>
+                    All books
                 </h4>
             </div>
             <div id="collapseList" class="panel-collapse collapse">
@@ -75,7 +82,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="book in books">
+                            <tr ng-repeat="book in books | filter:search">
                                 <td>{{book.ISBN}}</td>
                                 <td>{{book.name}}</td>
                                 <td>{{book.description}}</td>
@@ -100,7 +107,9 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h4 class="panel-title">Add book</h4>
+                <h4 class="panel-title">
+                    Add book
+                </h4>
             </div>
             <div id="collapseAdd" class="panel-collapse collapse">
                 <div class="panel-body">
@@ -209,28 +218,6 @@
         </div>
     </div>
 </div>
-<!--
-
-<script id="book-form-template" type="text/x-handlebars-template">
-    <form accept-charset="UTF-8">
-        <fieldset>
-            <legend>Book data</legend>
-            <label class="form-group">
-                Name:
-                <input type="text" name="name" class="form-control" placeholder="Name" required>
-            </label>
-            <button type="submit" class="btn btn-primary">Add</button>
-        </fieldset>
-    </form>
-</script>
-
-<script id="notification-template" type="text/x-handlebars-template">
-    <div class="alert alert-success alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <strong>Successfully removed:</strong> {{this}}
-    </div>
-</script>
--->
 <script type="text/javascript" src="js/angular.min.js"></script>
 <script type="text/javascript" src="js/app.js"></script>
 </body>
