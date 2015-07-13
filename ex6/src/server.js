@@ -2,9 +2,7 @@ var express = require('express'),
     app = express(),
     bodyParser = require('body-parser'),
     fs = require('fs'),
-    Book = require('./models/book'),
-    Author = require('./models/author');
-
+    Book = require('./models/book');
 
 var notFound = {
     type: "notFound",
@@ -46,28 +44,7 @@ router.route('/books')
     .post(function (req, res) {
         "use strict";
 
-        var authors = [];
-
-        if (typeof req.body.author === "string") {
-            var author = new Author();
-            author.name = req.body.author;
-            authors.push(author);
-        } else if (typeof req.body.author === "object") {
-            for (var singleAuthor in req.body.author) {
-                if (req.body.author.hasOwnProperty(singleAuthor)) {
-                    var currentAuthor = req.body.author[singleAuthor];
-                    var newAuthor = new Author();
-                    newAuthor.name = currentAuthor;
-                    authors.push(newAuthor);
-                }
-            }
-        }
-
         var book = new Book();
-
-        if (authors.length > 0) {
-            book.author = authors;
-        }
 
         book.name = req.body.name;
         book.description = req.body.description;
@@ -76,13 +53,17 @@ router.route('/books')
 
         book.validate(function (err) {
             if (err) {
+                var callbackError = JSON.parse(JSON.stringify(badRequest));
+                callbackError.errors = err.errors;
                 res.statusCode = 400;
-                return res.json(badRequest);
+                return res.json(callbackError);
             } else {
                 book.save(function (err) {
                     if (err) {
+                        var callbackError = JSON.parse(JSON.stringify(badRequest));
+                        callbackError.errors = err.errors;
                         res.statusCode = 400;
-                        return res.json(badRequest);
+                        return res.json(callbackError);
                     }
                     res.statusCode = 201;
                     res.json(book);
@@ -105,8 +86,10 @@ router.route('/books')
             .limit(paginate)
             .exec(function (err, books) {
                 if (err) {
+                    var callbackError = JSON.parse(JSON.stringify(badRequest));
+                    callbackError.errors = err.errors;
                     res.statusCode = 400;
-                    return res.json(badRequest);
+                    return res.json(callbackError);
                 }
                 res.statusCode = 200;
                 res.json(books);
@@ -138,27 +121,6 @@ router.route('/books/:book_id')
                 return res.json(notFound);
             }
 
-            var authors = [];
-
-            if (typeof req.body.author === "string") {
-                var author = new Author();
-                author.name = req.body.author;
-                authors.push(author);
-            } else if (typeof req.body.author === "object") {
-                for (var singleAuthor in req.body.author) {
-                    if (req.body.author.hasOwnProperty(singleAuthor)) {
-                        var currentAuthor = req.body.author[singleAuthor];
-                        var newAuthor = new Author();
-                        newAuthor.name = currentAuthor;
-                        authors.push(newAuthor);
-                    }
-                }
-            }
-
-            if (authors.length > 0) {
-                book.author = authors;
-            }
-
             book.name = req.body.name;
             book.description = req.body.description;
             book.ISBN = req.body.ISBN;
@@ -166,13 +128,17 @@ router.route('/books/:book_id')
 
             book.validate(function (err) {
                 if (err) {
+                    var callbackError = JSON.parse(JSON.stringify(badRequest));
+                    callbackError.errors = err.errors;
                     res.statusCode = 400;
-                    return res.json(badRequest);
+                    return res.json(callbackError);
                 } else {
                     book.save(function (err) {
                         if (err) {
+                            var callbackError = JSON.parse(JSON.stringify(badRequest));
+                            callbackError.errors = err.errors;
                             res.statusCode = 400;
-                            return res.json(badRequest);
+                            return res.json(callbackError);
                         }
                         res.statusCode = 201;
                         res.json(book);
@@ -196,8 +162,10 @@ router.route('/books/:book_id')
             }
             book.remove(function (err) {
                 if (err) {
+                    var callbackError = JSON.parse(JSON.stringify(badRequest));
+                    callbackError.errors = err.errors;
                     res.statusCode = 400;
-                    return res.json(badRequest);
+                    return res.json(callbackError);
                 }
                 res.statusCode = 204;
                 res.json({

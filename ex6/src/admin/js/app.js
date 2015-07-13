@@ -8,22 +8,43 @@
  * matnr: 798419
  */
 
+var apiUrl = 'http://localhost:1337/api/books/';
+
+$(document).ready(function() {
+    $(".nav.navbar-nav").on("click", "li", function() {
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
+    });
+
+    $('.panel-collapse').on('show.bs.collapse', function () {
+        var id = $(this).attr("id");
+        var currentItem = $("a[href=#"+id+"]").parent();
+        currentItem.addClass("active");
+    }).on('hide.bs.collapse', function () {
+        var id = $(this).attr("id");
+        var currentItem = $("a[href=#"+id+"]").parent();
+        currentItem.removeClass("active");
+    });
+
+});
+
 angular.module('libraryApp', [])
 
-    .controller('BookController', function($scope, $http, $sce) {
+    .controller('BookController', function($scope, $http) {
 
         $scope.getAll = function() {
-            $http.get('http://localhost:1337/api/books/').then(function(resp) {
-                console.log($scope.editBook);
+            $http.get(apiUrl).then(function(resp) {
                 $scope.books = resp.data;
             }, function(err) {
                 errorHandler(err);
             });
         };
 
-        $scope.deleteBook = function(id) {
-            $http.delete('http://localhost:1337/api/books/'+id).then(function(resp) {
-                console.log("deleted " + id);
+        $scope.deleteBook = function(id, toggle) {
+            $http.delete(apiUrl+id).then(function() {
+                if (toggle) {
+                    $('#collapseList').collapse("toggle");
+                }
                 $scope.getAll();
             }, function(err) {
                 errorHandler(err);
@@ -31,30 +52,33 @@ angular.module('libraryApp', [])
         };
 
         $scope.editBook = function(id) {
-            $http.get('http://localhost:1337/api/books/'+id).then(function(resp) {
+            $http.get(apiUrl+id).then(function(resp) {
                 $scope.editBookData = resp.data;
-                $(".collapse.in").collapse('toggle');
-                $('#collapseEdit').collapse('toggle');
+                $('#collapseList').collapse("hide");
+                $('#collapseEdit').collapse("toggle");
+                $scope.hideAllNotifications();
             }, function(err) {
                 errorHandler(err);
             });
         };
 
+        $scope.addBook = function(addBookData) {
+
+            $http.post(apiUrl, addBookData).then(function() {
+                $('#collapseList').collapse("toggle");
+                $scope.hideAllNotifications();
+                $scope.getAll();
+            }, function(err) {
+                errorHandler(err);
+            });
+
+        };
+
         $scope.updateBook = function(item) {
 
-            var authors = [];
-
-            for (var i in item.author) {
-                if (item.author.hasOwnProperty(i)) {
-                    authors.push(item.author[i].name);
-                }
-            }
-
-            item.author = authors;
-
-            $http.put('http://localhost:1337/api/books/'+item._id, item).then(function(resp) {
-                $(".collapse.in").collapse('toggle');
-                $('#collapseList').collapse('toggle');
+            $http.put(apiUrl+item._id, item).then(function() {
+                $('#collapseList').collapse("toggle");
+                $scope.hideAllNotifications();
             }, function(err) {
                 errorHandler(err);
             });
@@ -70,8 +94,30 @@ angular.module('libraryApp', [])
             return input === 1 ? 'checked' : '';
         };
 
+        $scope.hideNotification = function(id) {
+            $scope.errObj.errors[id].show = false;
+        };
+
+        $scope.hideAllNotifications = function() {
+            $scope.errObj = {};
+        };
+
+        function errorHandler(err) {
+            $scope.errObj = {};
+            if (err.status === 400) {
+                $scope.errObj.msg = err.data.msg;
+                $scope.errObj.errors = err.data.errors;
+                for (var error in $scope.errObj.errors) {
+                    if ($scope.errObj.errors.hasOwnProperty(error)) {
+                        $scope.errObj.errors[error].show = true;
+                    }
+                }
+                $scope.errObj.show = true;
+                console.log( $scope.errObj);
+            } else {
+                console.error(err);
+            }
+        }
+
     });
 
-function errorHandler(err) {
-    console.error(err);
-}
